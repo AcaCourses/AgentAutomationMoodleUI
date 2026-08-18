@@ -389,7 +389,7 @@ export default function Home() {
                   />
                   {/* Preset company chips */}
                   <div className="flex flex-wrap gap-2 pt-1">
-                    {['IBM', 'Santander', 'Google', 'Microsoft', 'AWS', 'Oracle'].map((c) => (
+                    {['Canva', 'IBM', 'Santander', 'Google', 'Microsoft', 'AWS', 'Oracle'].map((c) => (
                       <button
                         key={c}
                         type="button"

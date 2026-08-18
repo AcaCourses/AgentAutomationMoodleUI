@@ -8,6 +8,7 @@ export interface PreCleanResult {
 
 // Lista de empresas comúnmente reconocidas para auto-detección
 const KNOWN_COMPANIES: { [key: string]: RegExp } = {
+  Canva: /\b(canva|canva\.link|canva\.com)\b/i,
   IBM: /\b(ibm|ibm z|ibm ambassador|ibm cloud)\b/i,
   Santander: /\b(santander|banco santander|becas santander)\b/i,
   Google: /\b(google|google cloud|gcp|gdsc)\b/i,
