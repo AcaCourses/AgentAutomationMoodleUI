@@ -80,7 +80,7 @@ export const LogTerminal: React.FC<LogTerminalProps> = ({ logs, onClearLogs, isR
             <div className="w-3 h-3 rounded-full bg-emerald-500/80" />
           </div>
           <div className="flex items-center gap-2 text-slate-200 font-mono text-sm font-semibold pl-2 border-l border-slate-700">
-            <Terminal className="w-4 h-4 text-moodle-orange" /> Consola de Logs Backend (Moodle / Playwright)
+            <Terminal className="w-4 h-4 text-moodle-orange" /> Consola de Logs Moodi (Playwright / Moodle)
           </div>
           {isRunning && (
             <span className="flex items-center gap-1.5 text-xs text-moodle-orange bg-moodle-orange/10 border border-moodle-orange/30 px-2 py-0.5 rounded-full font-sans font-medium animate-pulse">

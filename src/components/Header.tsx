@@ -27,20 +27,20 @@ export const Header: React.FC<HeaderProps> = ({
           
           {/* Logo & Title */}
           <div className="flex items-center space-x-3">
-            <div className="w-12 h-12 rounded-xl bg-moodle-orange flex items-center justify-center text-white font-bold text-2xl shadow-md moodle-glow shrink-0">
-              M
+            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-moodle-orange to-amber-600 flex items-center justify-center text-white font-extrabold text-2xl shadow-md moodle-glow shrink-0 tracking-tighter">
+              Moodi
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h1 className="text-2xl font-extrabold tracking-tight text-white">
-                  Agente Moodle SEA Acatlán
+                <h1 className="text-2xl font-extrabold tracking-tight text-white flex items-center gap-2">
+                  Moodi <span className="text-moodle-orange text-xs px-2 py-0.5 rounded-full bg-moodle-orange/20 border border-moodle-orange/30 font-semibold font-mono">AGENTE IA</span>
                 </h1>
                 <span className="bg-moodle-orange/20 text-moodle-orange border border-moodle-orange/30 text-xs font-semibold px-2 py-0.5 rounded-full flex items-center gap-1">
                   <Sparkles className="w-3 h-3" /> v2.0 AI
                 </span>
               </div>
               <p className="text-xs text-slate-300 flex items-center gap-1 mt-0.5">
-                <BookOpen className="w-3.5 h-3.5 text-moodle-orange" /> Automatización y Clasificación de Recursos Educativos
+                <BookOpen className="w-3.5 h-3.5 text-moodle-orange" /> Agente Inteligente Moodle SEA Acatlán
               </p>
             </div>
           </div>

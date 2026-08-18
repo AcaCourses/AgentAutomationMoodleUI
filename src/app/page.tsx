@@ -281,11 +281,11 @@ export default function Home() {
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-moodle-orange/20 border border-moodle-orange/40 text-moodle-orange text-xs font-semibold">
               <Sparkles className="w-3.5 h-3.5" /> Automatización Playwright + IA Gemini / OpenAI
             </div>
-            <h2 className="text-2xl font-bold tracking-tight text-white">
-              Publicador Inteligente de Recursos Moodle
+            <h2 className="text-2xl font-bold tracking-tight text-white flex items-center gap-2">
+              🤖 Moodi - Publicador Inteligente Moodle
             </h2>
             <p className="text-slate-300 text-sm max-w-2xl">
-              Conectado a <span className="font-mono text-moodle-orange">{getCleanBaseUrl()}</span>. Pega el texto descriptivo, limpia los enlaces y observa la consola en vivo mientras Playwright publica en Moodle SEA Acatlán.
+              Conectado a <span className="font-mono text-moodle-orange">{getCleanBaseUrl()}</span>. Pega el texto descriptivo, limpia los enlaces y observa la consola en vivo mientras <strong className="text-white">Moodi</strong> navega y publica automáticamente en Moodle SEA Acatlán.
             </p>
           </div>
 
@@ -487,8 +487,8 @@ export default function Home() {
       {/* Footer */}
       <footer className="bg-slate-900 text-slate-400 border-t border-slate-800 py-6 mt-12">
         <div className="max-w-7xl mx-auto px-4 text-center text-xs space-y-1">
-          <p className="font-semibold text-slate-300">Agente Moodle SEA Acatlán - FES Acatlán UNAM 2026</p>
-          <p className="text-slate-500 font-mono">Conectado a: {getCleanBaseUrl()}</p>
+          <p className="font-semibold text-slate-300">Moodi: Agente Inteligente Moodle SEA Acatlán - FES Acatlán UNAM 2026</p>
+          <p className="text-slate-500 font-mono">Backend API: {getCleanBaseUrl()}</p>
         </div>
       </footer>
 
