@@ -1,0 +1,61 @@
+@import "tailwindcss";
+
+@theme {
+  --color-moodle-orange: #F26A36;
+  --color-moodle-orangeHover: #D95220;
+  --color-moodle-lightOrange: #FFF4EF;
+  --color-moodle-navy: #1B2A4A;
+  --color-moodle-darkNavy: #0F1A30;
+  --color-moodle-slate: #2D3748;
+  --color-moodle-lightBg: #F8FAFC;
+  --color-moodle-cardBg: #FFFFFF;
+  --color-moodle-border: #E2E8F0;
+
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-mono: 'Fira Code', 'JetBrains Mono', monospace;
+}
+
+:root {
+  --foreground-rgb: 15, 23, 42;
+  --background-rgb: 248, 250, 252;
+}
+
+body {
+  color: rgb(var(--foreground-rgb));
+  background: rgb(var(--background-rgb));
+  font-family: var(--font-sans);
+}
+
+/* Custom Scrollbar for Terminal */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #0f172a;
+  border-radius: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #334155;
+  border-radius: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #475569;
+}
+
+/* Pulse Glow Animation */
+@keyframes pulseGlow {
+  0%, 100% {
+    box-shadow: 0 0 15px rgba(242, 106, 54, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 25px rgba(242, 106, 54, 0.6);
+  }
+}
+
+.moodle-glow {
+  animation: pulseGlow 3s infinite ease-in-out;
+}
