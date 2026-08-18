@@ -68,23 +68,23 @@ export const LogTerminal: React.FC<LogTerminalProps> = ({ logs, onClearLogs, isR
   };
 
   return (
-    <div className="bg-moodle-darkNavy rounded-xl border border-slate-700/80 shadow-2xl overflow-hidden flex flex-col h-[520px]">
+    <div className="bg-moodle-darkNavy rounded-xl border border-slate-700/80 shadow-2xl overflow-hidden flex flex-col h-[460px] md:h-[540px]">
       
       {/* Terminal Header Bar */}
       <div className="bg-slate-900 px-4 py-3 border-b border-slate-700/80 flex flex-wrap items-center justify-between gap-3">
         
         <div className="flex items-center gap-3">
-          <div className="flex items-center gap-1.5">
+          <div className="flex items-center gap-1.5 shrink-0">
             <div className="w-3 h-3 rounded-full bg-rose-500/80" />
             <div className="w-3 h-3 rounded-full bg-amber-500/80" />
             <div className="w-3 h-3 rounded-full bg-emerald-500/80" />
           </div>
-          <div className="flex items-center gap-2 text-slate-200 font-mono text-sm font-semibold pl-2 border-l border-slate-700">
-            <Terminal className="w-4 h-4 text-moodle-orange" /> Consola de Logs Moodi (Playwright / Moodle)
+          <div className="flex items-center gap-2 text-slate-200 font-mono text-xs sm:text-sm font-semibold pl-2 border-l border-slate-700">
+            <Terminal className="w-4 h-4 text-moodle-orange shrink-0" /> Consola de Logs Moodi (Playwright / Moodle)
           </div>
           {isRunning && (
-            <span className="flex items-center gap-1.5 text-xs text-moodle-orange bg-moodle-orange/10 border border-moodle-orange/30 px-2 py-0.5 rounded-full font-sans font-medium animate-pulse">
-              <span className="w-2 h-2 rounded-full bg-moodle-orange animate-ping" /> Ejecutando automatización...
+            <span className="flex items-center gap-1.5 text-xs text-moodle-orange bg-moodle-orange/10 border border-moodle-orange/30 px-2.5 py-1 rounded-full font-sans font-medium animate-pulse shrink-0">
+              <span className="w-2 h-2 rounded-full bg-moodle-orange animate-ping" /> Ejecutando...
             </span>
           )}
         </div>
@@ -93,14 +93,14 @@ export const LogTerminal: React.FC<LogTerminalProps> = ({ logs, onClearLogs, isR
         <div className="flex flex-wrap items-center gap-2 text-xs">
           
           {/* Level Filter Dropdown */}
-          <div className="flex items-center gap-1 bg-slate-800 border border-slate-700 rounded-lg p-0.5">
+          <div className="flex items-center gap-1 bg-slate-800 border border-slate-700 rounded-lg p-1 overflow-x-auto">
             {(['all', 'info', 'success', 'warn', 'error'] as const).map((lvl) => (
               <button
                 key={lvl}
                 onClick={() => setFilter(lvl)}
-                className={`px-2 py-1 rounded text-[11px] font-medium transition-colors capitalize ${
+                className={`px-2.5 py-1 rounded text-[11px] font-medium transition-all capitalize min-h-[32px] flex items-center active:scale-95 ${
                   filter === lvl
-                    ? 'bg-moodle-orange text-white font-bold'
+                    ? 'bg-moodle-orange text-white font-bold shadow-sm'
                     : 'text-slate-400 hover:text-slate-200 hover:bg-slate-700/50'
                 }`}
               >

@@ -24,11 +24,11 @@ export const Header: React.FC<HeaderProps> = ({
     <header className="bg-moodle-navy text-white shadow-lg border-b-4 border-moodle-orange">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
         <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-          
+
           {/* Logo & Title */}
           <div className="flex items-center space-x-3">
             <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-moodle-orange to-amber-600 flex items-center justify-center text-white font-extrabold text-2xl shadow-md moodle-glow shrink-0 tracking-tighter">
-              Moodi
+              M
             </div>
             <div>
               <div className="flex items-center gap-2">
@@ -47,7 +47,7 @@ export const Header: React.FC<HeaderProps> = ({
 
           {/* Configuration & Status Controls */}
           <div className="flex flex-wrap items-center gap-3">
-            
+
             {/* API Base URL Input */}
             <div className="flex items-center gap-2 bg-slate-800/80 border border-slate-700 px-3 py-1.5 rounded-lg text-xs">
               <Globe className="w-4 h-4 text-sky-400" />

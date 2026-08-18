@@ -30,18 +30,18 @@ export const ResponseViewer: React.FC<ResponseViewerProps> = ({ response }) => {
     <div className="bg-white rounded-xl border border-slate-200 shadow-md overflow-hidden flex flex-col">
       
       {/* Header Tabs */}
-      <div className="bg-slate-50 border-b border-slate-200 px-4 py-3 flex items-center justify-between">
-        <div className="flex items-center gap-2">
+      <div className="bg-slate-50 border-b border-slate-200 px-4 py-3 flex flex-wrap sm:flex-nowrap items-center justify-between gap-3">
+        <div className="flex items-center gap-2 shrink-0">
           <div className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
           <h3 className="font-bold text-slate-800 text-sm flex items-center gap-1.5">
             <CheckCircle2 className="w-4 h-4 text-emerald-600" /> Respuesta del Backend
           </h3>
         </div>
 
-        <div className="flex items-center gap-1 bg-slate-200/70 p-1 rounded-lg text-xs font-medium">
+        <div className="flex items-center gap-1 bg-slate-200/70 p-1 rounded-lg text-xs font-medium overflow-x-auto w-full sm:w-auto">
           <button
             onClick={() => setActiveTab('summary')}
-            className={`flex items-center gap-1 px-3 py-1 rounded-md transition-all ${
+            className={`flex items-center gap-1 px-3 py-1.5 rounded-md transition-all shrink-0 active:scale-95 ${
               activeTab === 'summary'
                 ? 'bg-white text-moodle-navy font-bold shadow-sm'
                 : 'text-slate-600 hover:text-slate-900'
@@ -51,7 +51,7 @@ export const ResponseViewer: React.FC<ResponseViewerProps> = ({ response }) => {
           </button>
           <button
             onClick={() => setActiveTab('html')}
-            className={`flex items-center gap-1 px-3 py-1 rounded-md transition-all ${
+            className={`flex items-center gap-1 px-3 py-1.5 rounded-md transition-all shrink-0 active:scale-95 ${
               activeTab === 'html'
                 ? 'bg-white text-moodle-navy font-bold shadow-sm'
                 : 'text-slate-600 hover:text-slate-900'
@@ -61,7 +61,7 @@ export const ResponseViewer: React.FC<ResponseViewerProps> = ({ response }) => {
           </button>
           <button
             onClick={() => setActiveTab('json')}
-            className={`flex items-center gap-1 px-3 py-1 rounded-md transition-all ${
+            className={`flex items-center gap-1 px-3 py-1.5 rounded-md transition-all shrink-0 active:scale-95 ${
               activeTab === 'json'
                 ? 'bg-white text-moodle-navy font-bold shadow-sm'
                 : 'text-slate-600 hover:text-slate-900'

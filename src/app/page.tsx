@@ -304,21 +304,21 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Dashboard Main Grid: Form + Terminal */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        {/* Dashboard Main Grid: Form + Terminal (Optimized for Tablets & Desktops) */}
+        <div className="grid grid-cols-1 xl:grid-cols-12 gap-6 lg:gap-8">
           
-          {/* Left Column: Form Controls (5 cols) */}
-          <div className="lg:col-span-5 space-y-6">
-            <div className="bg-white rounded-2xl border border-slate-200 shadow-md p-6 space-y-6">
+          {/* Left Column: Form Controls (5 cols on XL, 100% on Tablets) */}
+          <div className="xl:col-span-5 space-y-6">
+            <div className="bg-white rounded-2xl border border-slate-200 shadow-md p-5 sm:p-6 space-y-6">
               
               <div className="flex items-center justify-between border-b border-slate-200 pb-4">
-                <h3 className="font-extrabold text-slate-800 text-lg flex items-center gap-2">
-                  <Wand2 className="w-5 h-5 text-moodle-orange" /> Formulario de Recurso
+                <h3 className="font-extrabold text-slate-800 text-base sm:text-lg flex items-center gap-2">
+                  <Wand2 className="w-5 h-5 text-moodle-orange shrink-0" /> Formulario de Recurso
                 </h3>
                 <button
                   type="button"
                   onClick={handlePreClean}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-moodle-lightOrange border border-moodle-orange/30 text-moodle-orange hover:bg-moodle-orange hover:text-white text-xs font-bold transition-all shadow-sm"
+                  className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-moodle-lightOrange border border-moodle-orange/30 text-moodle-orange hover:bg-moodle-orange hover:text-white text-xs font-bold transition-all shadow-sm active:scale-95 touch-manipulation"
                   title="Limpiar saltos de línea y extraer URLs automáticamente"
                 >
                   <Sparkles className="w-3.5 h-3.5" /> Pre-Limpieza
@@ -388,15 +388,15 @@ export default function Home() {
                     className="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm text-slate-800 focus:ring-2 focus:ring-moodle-orange focus:border-moodle-orange transition-all bg-slate-50/50"
                   />
                   {/* Preset company chips */}
-                  <div className="flex flex-wrap gap-1.5 pt-1">
+                  <div className="flex flex-wrap gap-2 pt-1">
                     {['IBM', 'Santander', 'Google', 'Microsoft', 'AWS', 'Oracle'].map((c) => (
                       <button
                         key={c}
                         type="button"
                         onClick={() => handleSelectCompany(c)}
-                        className={`text-[11px] font-semibold px-2.5 py-0.5 rounded-full border transition-all ${
+                        className={`text-xs font-semibold px-3 py-1.5 rounded-full border transition-all active:scale-95 touch-manipulation min-h-[34px] flex items-center ${
                           empresa.toLowerCase() === c.toLowerCase()
-                            ? 'bg-moodle-orange text-white border-moodle-orange'
+                            ? 'bg-moodle-orange text-white border-moodle-orange shadow-sm'
                             : 'bg-slate-100 text-slate-600 border-slate-200 hover:bg-slate-200'
                         }`}
                       >
@@ -407,7 +407,7 @@ export default function Home() {
                 </div>
 
                 {/* Course Selection & Section */}
-                <div className="grid grid-cols-2 gap-3 pt-2">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
                   <div className="space-y-1">
                     <label htmlFor="courseIdOptionSelect" className="block text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1">
                       <BookOpen className="w-3.5 h-3.5 text-moodle-orange" /> Cursos Moodle:
@@ -416,7 +416,7 @@ export default function Home() {
                       id="courseIdOptionSelect"
                       value={courseIdOption}
                       onChange={(e) => setCourseIdOption(e.target.value)}
-                      className="w-full rounded-xl border border-slate-300 px-3 py-2 text-xs font-medium text-slate-800 bg-slate-50/50 focus:ring-2 focus:ring-moodle-orange focus:border-moodle-orange"
+                      className="w-full rounded-xl border border-slate-300 px-3 py-2 text-xs font-medium text-slate-800 bg-slate-50/50 focus:ring-2 focus:ring-moodle-orange focus:border-moodle-orange min-h-[42px]"
                     >
                       <option value="both">Ambos Cursos (22841 y 22842)</option>
                       <option value="22841">Solo Curso 22841</option>
@@ -434,7 +434,7 @@ export default function Home() {
                       min={0}
                       value={seccion}
                       onChange={(e) => setSeccion(parseInt(e.target.value) || 0)}
-                      className="w-full rounded-xl border border-slate-300 px-3 py-2 text-xs font-medium text-slate-800 bg-slate-50/50 focus:ring-2 focus:ring-moodle-orange focus:border-moodle-orange"
+                      className="w-full rounded-xl border border-slate-300 px-3 py-2 text-xs font-medium text-slate-800 bg-slate-50/50 focus:ring-2 focus:ring-moodle-orange focus:border-moodle-orange min-h-[42px]"
                     />
                   </div>
                 </div>
@@ -443,10 +443,10 @@ export default function Home() {
                 <button
                   type="submit"
                   disabled={isLoading}
-                  className={`w-full py-3 px-6 rounded-xl font-bold text-white text-sm shadow-lg flex items-center justify-center gap-2 transition-all ${
+                  className={`w-full min-h-[48px] py-3.5 px-6 rounded-xl font-bold text-white text-sm shadow-lg flex items-center justify-center gap-2 transition-all active:scale-[0.98] touch-manipulation ${
                     isLoading
                       ? 'bg-slate-400 cursor-not-allowed'
-                      : 'bg-moodle-orange hover:bg-moodle-orangeHover moodle-glow active:scale-[0.99]'
+                      : 'bg-moodle-orange hover:bg-moodle-orangeHover moodle-glow'
                   }`}
                 >
                   {isLoading ? (
@@ -466,8 +466,8 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Right Column: Live Log Terminal (7 cols) */}
-          <div className="lg:col-span-7 space-y-6">
+          {/* Right Column: Live Log Terminal (7 cols on XL, 100% on Tablets) */}
+          <div className="xl:col-span-7 space-y-6">
             <LogTerminal
               logs={logs}
               onClearLogs={() => setLogs([])}
