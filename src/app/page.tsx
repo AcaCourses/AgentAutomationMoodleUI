@@ -274,8 +274,8 @@ export default function Home() {
       {/* Main Container */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-8 space-y-6 sm:space-y-8">
 
-        {/* Intro Hero Card (Compact on Mobile) */}
-        <div className="bg-gradient-to-r from-moodle-navy via-slate-900 to-moodle-darkNavy text-white rounded-2xl p-4 sm:p-6 shadow-xl border border-slate-700/80 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 md:gap-6">
+        {/* Intro Hero Card (Hidden on Mobile) */}
+        <div className="hidden md:flex flex-col md:flex-row items-start md:items-center justify-between gap-4 md:gap-6 bg-gradient-to-r from-moodle-navy via-slate-900 to-moodle-darkNavy text-white rounded-2xl p-4 sm:p-6 shadow-xl border border-slate-700/80">
           <div className="space-y-1.5 sm:space-y-2">
             <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-full bg-moodle-orange/20 border border-moodle-orange/40 text-moodle-orange text-[11px] sm:text-xs font-semibold">
               <Sparkles className="w-3 h-3 sm:w-3.5 sm:h-3.5" /> Automatización Playwright + IA

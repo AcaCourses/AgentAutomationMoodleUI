@@ -94,7 +94,8 @@ export const LogTerminal: React.FC<LogTerminalProps> = ({ logs, onClearLogs, isR
               <div className="w-3 h-3 rounded-full bg-emerald-500/80" />
             </div>
             <div className="flex items-center gap-2 text-slate-200 font-mono text-xs sm:text-sm font-semibold pl-2 border-l border-slate-700">
-              <Terminal className="w-4 h-4 text-moodle-orange shrink-0" /> Consola de Logs Moodi
+              <Terminal className="w-4 h-4 text-moodle-orange shrink-0" />
+              <span className="hidden sm:inline">Consola de Logs Moodi</span>
             </div>
             {isRunning && (
               <span className="flex items-center gap-1.5 text-[11px] text-moodle-orange bg-moodle-orange/10 border border-moodle-orange/30 px-2 py-0.5 rounded-full font-sans font-medium animate-pulse shrink-0">
@@ -106,7 +107,7 @@ export const LogTerminal: React.FC<LogTerminalProps> = ({ logs, onClearLogs, isR
           {/* Mobile Dropdown Chevron Indicator */}
           <div className="flex items-center gap-2 md:hidden">
             <span className="text-[11px] font-sans text-slate-400 font-medium">
-              {isMobileExpanded ? 'Ocultar' : 'Ver todos'}
+              {isMobileExpanded ? 'Ocultar' : 'Ver logs'}
             </span>
             <button 
               type="button" 
@@ -133,11 +134,11 @@ export const LogTerminal: React.FC<LogTerminalProps> = ({ logs, onClearLogs, isR
           </div>
         )}
 
-        {/* Action Controls & Filters (Desktop always, Mobile when expanded) */}
+        {/* Action Controls (In mobile only Copy & Clear are shown) */}
         <div className={`${isMobileExpanded ? 'flex' : 'hidden md:flex'} flex-wrap items-center gap-2 text-xs pt-2 md:pt-0 border-t md:border-t-0 border-slate-800`}>
           
-          {/* Level Filter Dropdown */}
-          <div className="flex items-center gap-1 bg-slate-800 border border-slate-700 rounded-lg p-1 overflow-x-auto">
+          {/* Level Filter Dropdown (Hidden on mobile < md) */}
+          <div className="hidden md:flex items-center gap-1 bg-slate-800 border border-slate-700 rounded-lg p-1 overflow-x-auto">
             {(['all', 'info', 'success', 'warn', 'error'] as const).map((lvl) => (
               <button
                 key={lvl}
@@ -157,7 +158,7 @@ export const LogTerminal: React.FC<LogTerminalProps> = ({ logs, onClearLogs, isR
             ))}
           </div>
 
-          {/* Auto Scroll Toggle */}
+          {/* Auto Scroll Toggle (Hidden on mobile < md) */}
           <button
             type="button"
             onClick={(e) => {
@@ -165,7 +166,7 @@ export const LogTerminal: React.FC<LogTerminalProps> = ({ logs, onClearLogs, isR
               setAutoScroll(!autoScroll);
             }}
             title="Alternar desplazamiento automático"
-            className={`p-1.5 rounded-lg border transition-colors ${
+            className={`hidden md:block p-1.5 rounded-lg border transition-colors ${
               autoScroll
                 ? 'bg-slate-800 text-emerald-400 border-emerald-500/40'
                 : 'bg-slate-800 text-slate-400 border-slate-700 hover:text-slate-200'
@@ -174,7 +175,7 @@ export const LogTerminal: React.FC<LogTerminalProps> = ({ logs, onClearLogs, isR
             <ArrowDown className="w-3.5 h-3.5" />
           </button>
 
-          {/* Copy Button */}
+          {/* Copy Button (Always visible) */}
           <button
             type="button"
             onClick={handleCopy}
@@ -194,7 +195,7 @@ export const LogTerminal: React.FC<LogTerminalProps> = ({ logs, onClearLogs, isR
             )}
           </button>
 
-          {/* Clear Button */}
+          {/* Clear Button (Always visible) */}
           <button
             type="button"
             onClick={handleClear}
