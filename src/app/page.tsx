@@ -9,13 +9,13 @@ import { Sparkles, Send, RefreshCw, Wand2, Link2, Globe, Building2, BookOpen, La
 
 export default function Home() {
   const [apiBaseUrl, setApiBaseUrl] = useState<string>(
-    process.env.NEXT_PUBLIC_API_BASE_URL || 'https://joylessly-dress-grader.ngrok-free.dev'
+    process.env.NEXT_PUBLIC_API_BASE_URL || 'https://agentautomationmoodle.onrender.com'
   );
   const [apiSecret, setApiSecret] = useState<string>(
     process.env.NEXT_PUBLIC_API_SECRET || 'seacatlan2026'
   );
   const [serverStatus, setServerStatus] = useState<'online' | 'offline' | 'checking'>('checking');
-  
+
   // Form state
   const [texto, setTexto] = useState<string>('');
   const [url, setUrl] = useState<string>('');
@@ -143,7 +143,7 @@ export default function Home() {
       try {
         const streamEndpoint = `${baseUrl}/webhook-linkedin-stream`;
         addLog(`📡 Conectando endpoint SSE ${streamEndpoint}...`, 'info');
-        
+
         const response = await fetch(streamEndpoint, {
           method: 'POST',
           headers: {
@@ -239,7 +239,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen flex flex-col bg-slate-50">
-      
+
       {/* Header */}
       <Header
         apiBaseUrl={apiBaseUrl}
@@ -254,13 +254,12 @@ export default function Home() {
       {notification && (
         <div className="fixed top-20 right-6 z-50 animate-bounce">
           <div
-            className={`flex items-center gap-3 px-4 py-3 rounded-xl shadow-xl border text-sm font-semibold ${
-              notification.type === 'success'
+            className={`flex items-center gap-3 px-4 py-3 rounded-xl shadow-xl border text-sm font-semibold ${notification.type === 'success'
                 ? 'bg-emerald-600 text-white border-emerald-500'
                 : notification.type === 'error'
-                ? 'bg-rose-600 text-white border-rose-500'
-                : 'bg-sky-600 text-white border-sky-500'
-            }`}
+                  ? 'bg-rose-600 text-white border-rose-500'
+                  : 'bg-sky-600 text-white border-sky-500'
+              }`}
           >
             {notification.type === 'success' ? (
               <CheckCircle2 className="w-5 h-5" />
@@ -274,7 +273,7 @@ export default function Home() {
 
       {/* Main Container */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
-        
+
         {/* Intro Hero Card */}
         <div className="bg-gradient-to-r from-moodle-navy via-slate-900 to-moodle-darkNavy text-white rounded-2xl p-6 shadow-xl border border-slate-700/80 flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="space-y-2">
@@ -292,11 +291,10 @@ export default function Home() {
           <div className="flex items-center gap-3 shrink-0">
             <button
               onClick={() => setUseStreaming(!useStreaming)}
-              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold border transition-all ${
-                useStreaming
+              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold border transition-all ${useStreaming
                   ? 'bg-moodle-orange text-white border-moodle-orange shadow-lg moodle-glow'
                   : 'bg-slate-800 text-slate-300 border-slate-700 hover:border-slate-600'
-              }`}
+                }`}
             >
               <RefreshCw className={`w-3.5 h-3.5 ${useStreaming ? 'animate-spin' : ''}`} />
               {useStreaming ? 'Streaming SSE Activo' : 'Modo HTTP Estándar'}
@@ -306,11 +304,11 @@ export default function Home() {
 
         {/* Dashboard Main Grid: Form + Terminal (Optimized for Tablets & Desktops) */}
         <div className="grid grid-cols-1 xl:grid-cols-12 gap-6 lg:gap-8">
-          
+
           {/* Left Column: Form Controls (5 cols on XL, 100% on Tablets) */}
           <div className="xl:col-span-5 space-y-6">
             <div className="bg-white rounded-2xl border border-slate-200 shadow-md p-5 sm:p-6 space-y-6">
-              
+
               <div className="flex items-center justify-between border-b border-slate-200 pb-4">
                 <h3 className="font-extrabold text-slate-800 text-base sm:text-lg flex items-center gap-2">
                   <Wand2 className="w-5 h-5 text-moodle-orange shrink-0" /> Formulario de Recurso
@@ -326,7 +324,7 @@ export default function Home() {
               </div>
 
               <form onSubmit={handleSubmit} className="space-y-4">
-                
+
                 {/* Texto Input */}
                 <div className="space-y-1">
                   <label htmlFor="textoInput" className="block text-xs font-bold text-slate-700 uppercase tracking-wider">
@@ -394,11 +392,10 @@ export default function Home() {
                         key={c}
                         type="button"
                         onClick={() => handleSelectCompany(c)}
-                        className={`text-xs font-semibold px-3 py-1.5 rounded-full border transition-all active:scale-95 touch-manipulation min-h-[34px] flex items-center ${
-                          empresa.toLowerCase() === c.toLowerCase()
+                        className={`text-xs font-semibold px-3 py-1.5 rounded-full border transition-all active:scale-95 touch-manipulation min-h-[34px] flex items-center ${empresa.toLowerCase() === c.toLowerCase()
                             ? 'bg-moodle-orange text-white border-moodle-orange shadow-sm'
                             : 'bg-slate-100 text-slate-600 border-slate-200 hover:bg-slate-200'
-                        }`}
+                          }`}
                       >
                         +{c}
                       </button>
@@ -443,11 +440,10 @@ export default function Home() {
                 <button
                   type="submit"
                   disabled={isLoading}
-                  className={`w-full min-h-[48px] py-3.5 px-6 rounded-xl font-bold text-white text-sm shadow-lg flex items-center justify-center gap-2 transition-all active:scale-[0.98] touch-manipulation ${
-                    isLoading
+                  className={`w-full min-h-[48px] py-3.5 px-6 rounded-xl font-bold text-white text-sm shadow-lg flex items-center justify-center gap-2 transition-all active:scale-[0.98] touch-manipulation ${isLoading
                       ? 'bg-slate-400 cursor-not-allowed'
                       : 'bg-moodle-orange hover:bg-moodle-orangeHover moodle-glow'
-                  }`}
+                    }`}
                 >
                   {isLoading ? (
                     <>
