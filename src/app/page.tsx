@@ -272,26 +272,26 @@ export default function Home() {
       )}
 
       {/* Main Container */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+      <main className="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-8 space-y-6 sm:space-y-8">
 
-        {/* Intro Hero Card */}
-        <div className="bg-gradient-to-r from-moodle-navy via-slate-900 to-moodle-darkNavy text-white rounded-2xl p-6 shadow-xl border border-slate-700/80 flex flex-col md:flex-row items-center justify-between gap-6">
-          <div className="space-y-2">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-moodle-orange/20 border border-moodle-orange/40 text-moodle-orange text-xs font-semibold">
-              <Sparkles className="w-3.5 h-3.5" /> Automatización Playwright + IA Gemini / OpenAI
+        {/* Intro Hero Card (Compact on Mobile) */}
+        <div className="bg-gradient-to-r from-moodle-navy via-slate-900 to-moodle-darkNavy text-white rounded-2xl p-4 sm:p-6 shadow-xl border border-slate-700/80 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 md:gap-6">
+          <div className="space-y-1.5 sm:space-y-2">
+            <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-full bg-moodle-orange/20 border border-moodle-orange/40 text-moodle-orange text-[11px] sm:text-xs font-semibold">
+              <Sparkles className="w-3 h-3 sm:w-3.5 sm:h-3.5" /> Automatización Playwright + IA
             </div>
-            <h2 className="text-2xl font-bold tracking-tight text-white flex items-center gap-2">
+            <h2 className="text-lg sm:text-2xl font-bold tracking-tight text-white flex items-center gap-2">
               🤖 Moodi - Publicador Inteligente Moodle
             </h2>
-            <p className="text-slate-300 text-sm max-w-2xl">
-              Conectado a <span className="font-mono text-moodle-orange">{getCleanBaseUrl()}</span>. Pega el texto descriptivo, limpia los enlaces y observa la consola en vivo mientras <strong className="text-white">Moodi</strong> navega y publica automáticamente en Moodle SEA Acatlán.
+            <p className="text-slate-300 text-xs sm:text-sm max-w-2xl leading-relaxed">
+              Conectado a <span className="font-mono text-moodle-orange">{getCleanBaseUrl()}</span>. Publica contenido automáticamente en Moodle SEA Acatlán.
             </p>
           </div>
 
-          <div className="flex items-center gap-3 shrink-0">
+          <div className="flex items-center gap-3 shrink-0 w-full sm:w-auto justify-end">
             <button
               onClick={() => setUseStreaming(!useStreaming)}
-              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold border transition-all ${useStreaming
+              className={`flex items-center justify-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold border transition-all w-full sm:w-auto ${useStreaming
                   ? 'bg-moodle-orange text-white border-moodle-orange shadow-lg moodle-glow'
                   : 'bg-slate-800 text-slate-300 border-slate-700 hover:border-slate-600'
                 }`}
@@ -302,21 +302,21 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Dashboard Main Grid: Form + Terminal (Optimized for Tablets & Desktops) */}
+        {/* Dashboard Main Grid: Form + Terminal */}
         <div className="grid grid-cols-1 xl:grid-cols-12 gap-6 lg:gap-8">
 
-          {/* Left Column: Form Controls (5 cols on XL, 100% on Tablets) */}
+          {/* Left Column: Form Controls (5 cols on XL) */}
           <div className="xl:col-span-5 space-y-6">
-            <div className="bg-white rounded-2xl border border-slate-200 shadow-md p-5 sm:p-6 space-y-6">
+            <div className="bg-white rounded-2xl border border-slate-200 shadow-md p-4 sm:p-6 space-y-5">
 
-              <div className="flex items-center justify-between border-b border-slate-200 pb-4">
+              <div className="flex items-center justify-between border-b border-slate-200 pb-3 sm:pb-4">
                 <h3 className="font-extrabold text-slate-800 text-base sm:text-lg flex items-center gap-2">
-                  <Wand2 className="w-5 h-5 text-moodle-orange shrink-0" /> Formulario de Recurso
+                  <Wand2 className="w-4 h-4 sm:w-5 sm:h-5 text-moodle-orange shrink-0" /> Formulario de Recurso
                 </h3>
                 <button
                   type="button"
                   onClick={handlePreClean}
-                  className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-moodle-lightOrange border border-moodle-orange/30 text-moodle-orange hover:bg-moodle-orange hover:text-white text-xs font-bold transition-all shadow-sm active:scale-95 touch-manipulation"
+                  className="flex items-center gap-1.5 px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-xl bg-moodle-lightOrange border border-moodle-orange/30 text-moodle-orange hover:bg-moodle-orange hover:text-white text-xs font-bold transition-all shadow-sm active:scale-95 touch-manipulation"
                   title="Limpiar saltos de línea y extraer URLs automáticamente"
                 >
                   <Sparkles className="w-3.5 h-3.5" /> Pre-Limpieza
@@ -332,11 +332,11 @@ export default function Home() {
                   </label>
                   <textarea
                     id="textoInput"
-                    rows={4}
+                    rows={3}
                     value={texto}
                     onChange={(e) => setTexto(e.target.value)}
                     placeholder="Pega el post de LinkedIn o resumen del evento aquí..."
-                    className="w-full rounded-xl border border-slate-300 p-3 text-sm text-slate-800 focus:ring-2 focus:ring-moodle-orange focus:border-moodle-orange transition-all font-sans bg-slate-50/50"
+                    className="w-full rounded-xl border border-slate-300 p-3 text-xs sm:text-sm text-slate-800 focus:ring-2 focus:ring-moodle-orange focus:border-moodle-orange transition-all font-sans bg-slate-50/50"
                     required
                   />
                 </div>
@@ -352,7 +352,7 @@ export default function Home() {
                     value={url}
                     onChange={(e) => setUrl(e.target.value)}
                     placeholder="https://airtable.com/form... o enlace oficial"
-                    className="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm text-slate-800 focus:ring-2 focus:ring-moodle-orange focus:border-moodle-orange transition-all bg-slate-50/50"
+                    className="w-full rounded-xl border border-slate-300 px-3 py-2 text-xs sm:text-sm text-slate-800 focus:ring-2 focus:ring-moodle-orange focus:border-moodle-orange transition-all bg-slate-50/50"
                     required
                   />
                 </div>
@@ -367,44 +367,53 @@ export default function Home() {
                     type="text"
                     value={linkedinUrl}
                     onChange={(e) => setLinkedinUrl(e.target.value)}
-                    placeholder="https://www.linkedin.com/feed/update/urn:li:activity:..."
-                    className="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm text-slate-800 focus:ring-2 focus:ring-moodle-orange focus:border-moodle-orange transition-all bg-slate-50/50"
+                    placeholder="https://www.linkedin.com/feed/update/..."
+                    className="w-full rounded-xl border border-slate-300 px-3 py-2 text-xs sm:text-sm text-slate-800 focus:ring-2 focus:ring-moodle-orange focus:border-moodle-orange transition-all bg-slate-50/50"
                   />
                 </div>
 
-                {/* Empresa & Presets */}
-                <div className="space-y-2">
-                  <label htmlFor="empresaInput" className="block text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1">
+                {/* Dropdown Selection for Empresa */}
+                <div className="space-y-1.5">
+                  <label htmlFor="empresaSelect" className="block text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1">
                     <Building2 className="w-3.5 h-3.5 text-slate-600" /> Empresa Organizadora:
                   </label>
-                  <input
-                    id="empresaInput"
-                    type="text"
-                    value={empresa}
-                    onChange={(e) => setEmpresa(e.target.value)}
-                    placeholder="Ej. IBM, Santander, Google, Microsoft"
-                    className="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm text-slate-800 focus:ring-2 focus:ring-moodle-orange focus:border-moodle-orange transition-all bg-slate-50/50"
-                  />
-                  {/* Preset company chips */}
-                  <div className="flex flex-wrap gap-2 pt-1">
-                    {['Canva', 'IBM', 'Santander', 'Google', 'Microsoft', 'AWS', 'Oracle'].map((c) => (
-                      <button
-                        key={c}
-                        type="button"
-                        onClick={() => handleSelectCompany(c)}
-                        className={`text-xs font-semibold px-3 py-1.5 rounded-full border transition-all active:scale-95 touch-manipulation min-h-[34px] flex items-center ${empresa.toLowerCase() === c.toLowerCase()
-                            ? 'bg-moodle-orange text-white border-moodle-orange shadow-sm'
-                            : 'bg-slate-100 text-slate-600 border-slate-200 hover:bg-slate-200'
-                          }`}
-                      >
-                        +{c}
-                      </button>
-                    ))}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    <select
+                      id="empresaSelect"
+                      value={['Canva', 'IBM', 'Santander', 'Google', 'Microsoft', 'AWS', 'Oracle', 'UNAM'].includes(empresa) ? empresa : (empresa ? 'custom' : '')}
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        if (val !== 'custom') setEmpresa(val);
+                      }}
+                      className="w-full rounded-xl border border-slate-300 px-3 py-2 text-xs font-medium text-slate-800 bg-slate-50/50 focus:ring-2 focus:ring-moodle-orange focus:border-moodle-orange min-h-[42px]"
+                    >
+                      <option value="">-- Seleccionar Empresa --</option>
+                      <option value="Canva">Canva</option>
+                      <option value="IBM">IBM</option>
+                      <option value="Santander">Santander</option>
+                      <option value="Google">Google</option>
+                      <option value="Microsoft">Microsoft</option>
+                      <option value="AWS">AWS</option>
+                      <option value="Oracle">Oracle</option>
+                      <option value="UNAM">UNAM</option>
+                      <option value="custom">Personalizada / Otra...</option>
+                    </select>
+
+                    <input
+                      id="empresaInput"
+                      type="text"
+                      value={empresa}
+                      onChange={(e) => setEmpresa(e.target.value)}
+                      placeholder="Nombre de empresa..."
+                      className="w-full rounded-xl border border-slate-300 px-3 py-2 text-xs sm:text-sm text-slate-800 focus:ring-2 focus:ring-moodle-orange focus:border-moodle-orange transition-all bg-slate-50/50 min-h-[42px]"
+                    />
                   </div>
                 </div>
 
-                {/* Course Selection & Section */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+                {/* Course Selection & Section Dropdowns */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                  
+                  {/* Course Select Dropdown */}
                   <div className="space-y-1">
                     <label htmlFor="courseIdOptionSelect" className="block text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1">
                       <BookOpen className="w-3.5 h-3.5 text-moodle-orange" /> Cursos Moodle:
@@ -421,19 +430,31 @@ export default function Home() {
                     </select>
                   </div>
 
+                  {/* Section Select Dropdown */}
                   <div className="space-y-1">
-                    <label htmlFor="seccionInput" className="block text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1">
-                      <Layers className="w-3.5 h-3.5 text-slate-600" /> Sección Index:
+                    <label htmlFor="seccionSelect" className="block text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1">
+                      <Layers className="w-3.5 h-3.5 text-slate-600" /> Sección Moodle:
                     </label>
-                    <input
-                      id="seccionInput"
-                      type="number"
-                      min={0}
+                    <select
+                      id="seccionSelect"
                       value={seccion}
-                      onChange={(e) => setSeccion(parseInt(e.target.value) || 0)}
+                      onChange={(e) => setSeccion(Number(e.target.value))}
                       className="w-full rounded-xl border border-slate-300 px-3 py-2 text-xs font-medium text-slate-800 bg-slate-50/50 focus:ring-2 focus:ring-moodle-orange focus:border-moodle-orange min-h-[42px]"
-                    />
+                    >
+                      <option value={0}>Sección 0 (General / Inicio)</option>
+                      <option value={1}>Sección 1</option>
+                      <option value={2}>Sección 2</option>
+                      <option value={3}>Sección 3</option>
+                      <option value={4}>Sección 4</option>
+                      <option value={5}>Sección 5</option>
+                      <option value={6}>Sección 6</option>
+                      <option value={7}>Sección 7</option>
+                      <option value={8}>Sección 8</option>
+                      <option value={9}>Sección 9</option>
+                      <option value={10}>Sección 10</option>
+                    </select>
                   </div>
+
                 </div>
 
                 {/* Submit Action Button */}
@@ -462,7 +483,7 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Right Column: Live Log Terminal (7 cols on XL, 100% on Tablets) */}
+          {/* Right Column: Live Log Terminal (Dropdown preview on Mobile, full on XL) */}
           <div className="xl:col-span-7 space-y-6">
             <LogTerminal
               logs={logs}
@@ -474,7 +495,7 @@ export default function Home() {
         </div>
 
         {/* Bottom Section: Response Visualizer */}
-        <div className="pt-4">
+        <div className="pt-2">
           <ResponseViewer response={backendResponse} />
         </div>
 
