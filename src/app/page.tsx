@@ -23,7 +23,13 @@ import {
   Layers,
   Terminal,
   Copy,
-  Check
+  Check,
+  Maximize2,
+  Minimize2,
+  X,
+  Trash2,
+  Smile,
+  Zap
 } from 'lucide-react';
 
 interface ChatMessage {
@@ -82,15 +88,22 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [copiedId, setCopiedId] = useState<string | null>(null);
 
+  // Expandable Textarea Modal state
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+
+  // Agent Avatar Animation state
+  const [agentWiggle, setAgentWiggle] = useState<boolean>(false);
+  const [agentSpeech, setAgentSpeech] = useState<string | null>(null);
+
   // Chat message history
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
       id: 'welcome-message',
       sender: 'modi',
       timestamp: new Date().toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit' }),
-      text: `¡Hola! Soy **Modi**, tu agente de automatización en Moodle SEA Acatlán 🎓.
+      text: `¡Hola! Soy **Modi**, tu agente autónomo de automatización en Moodle SEA Acatlán 🎓.
 
-Para publicar una convocatoria, evento o recurso, solo envíame un mensaje en el chat. Puedes incluir:
+Para publicar una convocatoria, evento o recurso, solo envíame un mensaje. Puedes incluir:
 - 📌 **Descripción del evento o curso**
 - 🔗 **URL de Registro / Destino**
 - 🌐 **Enlace de LinkedIn (Opcional)**
@@ -135,6 +148,21 @@ Si no especificas el curso o la sección, ¡yo me encargaré de clasificarlo e i
     checkServerStatus();
   }, [apiBaseUrl]);
 
+  // Handle agent avatar click interaction
+  const handleAgentClick = () => {
+    setAgentWiggle(true);
+    const greetings = [
+      '¡Hola! Estoy listo para procesar tus publicaciones en Moodle 🚀',
+      '¡Aquí estoy! Puedes pegarme textos largos usando el botón de ampliar 📝',
+      'Modi versión 2.0 activo y escuchando 🤖✨',
+      '¡FES Acatlán UNAM! Automatizando cursos y eventos 🎓',
+    ];
+    const randomSpeech = greetings[Math.floor(Math.random() * greetings.length)];
+    setAgentSpeech(randomSpeech);
+    setTimeout(() => setAgentWiggle(false), 600);
+    setTimeout(() => setAgentSpeech(null), 4000);
+  };
+
   // Toggle log accordion for a specific message
   const toggleLogs = (messageId: string) => {
     setMessages((prev) =>
@@ -155,6 +183,10 @@ Si no especificas el curso o la sección, ¡yo me encargaré de clasificarlo e i
   const handleSendMessage = async (customText?: string) => {
     const textToSend = (customText || inputMessage).trim();
     if (!textToSend || isLoading) return;
+
+    if (isModalOpen) {
+      setIsModalOpen(false);
+    }
 
     // Add user message
     const userMsgId = Math.random().toString(36).substring(2, 9);
@@ -289,7 +321,7 @@ Si no especificas el curso o la sección, ¡yo me encargaré de clasificarlo e i
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-900 text-slate-100 font-sans">
+    <div className="min-h-screen flex flex-col bg-slate-50 text-slate-800 font-sans selection:bg-orange-100 selection:text-moodle-orange">
       {/* Header */}
       <Header
         apiBaseUrl={apiBaseUrl}
@@ -300,116 +332,133 @@ Si no especificas el curso o la sección, ¡yo me encargaré de clasificarlo e i
         onCheckStatus={checkServerStatus}
       />
 
-      {/* Main Container */}
-      <main className="flex-1 max-w-5xl w-full mx-auto px-3 sm:px-6 py-4 flex flex-col justify-between space-y-4">
+      {/* Main Content Area */}
+      <main className="flex-1 max-w-5xl w-full mx-auto px-3 sm:px-6 py-5 flex flex-col justify-between space-y-4">
         
-        {/* Chat Feed Header */}
-        <div className="flex items-center justify-between bg-slate-800/80 border border-slate-700/80 rounded-2xl px-4 py-3 shadow-md backdrop-blur-sm">
-          <div className="flex items-center gap-3">
-            <div className="relative">
-              <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-moodle-orange to-amber-400 flex items-center justify-center text-white shadow-lg">
+        {/* Chat Header Status Card */}
+        <div className="flex items-center justify-between bg-white border border-slate-200 rounded-2xl p-4 shadow-sm relative overflow-hidden">
+          <div className="flex items-center gap-3.5 z-10">
+            {/* Interactive Agent Avatar */}
+            <div className="relative group cursor-pointer" onClick={handleAgentClick}>
+              <div className={`w-11 h-11 rounded-full bg-gradient-to-tr from-moodle-orange to-amber-500 flex items-center justify-center text-white shadow-md agent-ring-pulse ${agentWiggle ? 'agent-wiggle' : 'agent-float'}`}>
                 <Bot className="w-6 h-6" />
               </div>
-              <span className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-slate-800 ${serverStatus === 'online' ? 'bg-emerald-500' : 'bg-rose-500'}`} />
+              <span className={`absolute bottom-0 right-0 w-3.5 h-3.5 rounded-full border-2 border-white ${serverStatus === 'online' ? 'bg-emerald-500' : 'bg-rose-500'}`} />
             </div>
+
             <div>
-              <h2 className="text-base font-bold text-white flex items-center gap-2">
-                Modi <span className="text-xs px-2 py-0.5 rounded-full bg-moodle-orange/20 border border-moodle-orange/40 text-moodle-orange font-semibold">Agente Moodle Acatlán</span>
+              <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
+                Modi <span className="text-xs px-2.5 py-0.5 rounded-full bg-orange-100/80 border border-orange-200 text-moodle-orange font-bold font-mono">Agente Moodle</span>
               </h2>
-              <p className="text-xs text-slate-400">
-                {serverStatus === 'online' ? '🟢 Conectado y listo para recibir órdenes' : '⚠️ Verificando backend...'}
+              <p className="text-xs text-slate-500 font-medium">
+                {serverStatus === 'online' ? '🟢 En línea • listo para recibir instrucciones de automatización' : '⚠️ Verificando backend...'}
               </p>
             </div>
           </div>
 
-          <div className="text-xs text-slate-400 hidden sm:block font-mono">
-            SEA Acatlán • UNAM
+          <div className="hidden sm:flex items-center gap-2 text-xs text-slate-400 font-mono bg-slate-50 px-3 py-1.5 rounded-xl border border-slate-200/80">
+            <Zap className="w-3.5 h-3.5 text-moodle-orange" /> SEA Acatlán • UNAM
           </div>
+
+          {/* Interactive Agent Speech Bubble Popup */}
+          {agentSpeech && (
+            <div className="absolute top-16 left-12 z-20 bg-slate-900 text-white text-xs px-3.5 py-2 rounded-xl shadow-xl border border-slate-700 animate-message-pop max-w-xs flex items-center gap-2">
+              <Smile className="w-4 h-4 text-moodle-orange shrink-0" />
+              <span>{agentSpeech}</span>
+            </div>
+          )}
         </div>
 
-        {/* Chat Messages Feed Area */}
-        <div className="flex-1 bg-slate-950/60 border border-slate-800 rounded-2xl p-4 sm:p-6 overflow-y-auto space-y-6 min-h-[460px] max-h-[620px] shadow-inner">
+        {/* Chat Feed Area */}
+        <div className="flex-1 bg-white border border-slate-200/90 rounded-2xl p-4 sm:p-6 overflow-y-auto space-y-5 min-h-[460px] max-h-[620px] shadow-sm custom-scrollbar">
           {messages.map((msg) => (
             <div
               key={msg.id}
-              className={`flex gap-3 sm:gap-4 ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}
+              className={`flex gap-3 sm:gap-4 animate-message-pop ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}
             >
               {/* Modi Avatar */}
               {msg.sender === 'modi' && (
-                <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-gradient-to-tr from-moodle-orange to-amber-500 flex items-center justify-center text-white shrink-0 shadow-md mt-1">
+                <div 
+                  onClick={handleAgentClick}
+                  className="w-9 h-9 rounded-full bg-gradient-to-tr from-moodle-orange to-amber-500 flex items-center justify-center text-white shrink-0 shadow-sm mt-1 cursor-pointer hover:scale-105 transition-transform"
+                >
                   <Bot className="w-5 h-5" />
                 </div>
               )}
 
-              {/* Message Bubble Container */}
-              <div className={`max-w-[88%] sm:max-w-[80%] space-y-3 ${msg.sender === 'user' ? 'items-end' : 'items-start'}`}>
+              {/* Message Content Bubble Container */}
+              <div className={`max-w-[90%] sm:max-w-[82%] space-y-3 ${msg.sender === 'user' ? 'items-end' : 'items-start'}`}>
                 
                 {/* Text Bubble */}
                 <div
-                  className={`p-4 rounded-2xl text-xs sm:text-sm leading-relaxed shadow-md ${
+                  className={`p-4 rounded-2xl text-xs sm:text-sm leading-relaxed shadow-xs ${
                     msg.sender === 'user'
                       ? 'bg-moodle-orange text-white rounded-tr-none font-medium'
-                      : 'bg-slate-800 text-slate-200 border border-slate-700/80 rounded-tl-none'
+                      : 'bg-slate-50 text-slate-800 border border-slate-200 rounded-tl-none'
                   }`}
                 >
                   {msg.text && (
                     <div className="whitespace-pre-wrap">
                       {msg.text.split('**').map((part, i) =>
-                        i % 2 === 1 ? <strong key={i} className="font-bold text-amber-300">{part}</strong> : part
+                        i % 2 === 1 ? (
+                          <strong key={i} className={msg.sender === 'user' ? 'font-bold text-orange-100 underline decoration-orange-300/40' : 'font-bold text-slate-900'}>
+                            {part}
+                          </strong>
+                        ) : part
                       )}
                     </div>
                   )}
 
-                  {/* Modi Working Spinner State */}
+                  {/* Modi Working Animation */}
                   {msg.isWorking && (
-                    <div className="flex items-center gap-3 py-1 text-moodle-orange font-semibold animate-pulse">
+                    <div className="flex items-center gap-3 py-1.5 text-moodle-orange font-semibold">
                       <RefreshCw className="w-4 h-4 animate-spin text-moodle-orange" />
-                      <span>Estoy trabajando en ello... Modi está procesando y publicando en Moodle</span>
+                      <span className="text-xs">Modi está procesando tu solicitud y conectando con Moodle...</span>
                     </div>
                   )}
 
-                  {/* Error display */}
+                  {/* Error Box */}
                   {msg.error && (
-                    <div className="mt-2 p-3 bg-rose-950/80 border border-rose-700/80 text-rose-200 rounded-xl text-xs flex items-start gap-2">
-                      <AlertTriangle className="w-4 h-4 text-rose-400 shrink-0 mt-0.5" />
+                    <div className="mt-2.5 p-3 bg-rose-50 border border-rose-200 text-rose-800 rounded-xl text-xs flex items-start gap-2">
+                      <AlertTriangle className="w-4 h-4 text-rose-500 shrink-0 mt-0.5" />
                       <div>
-                        <p className="font-bold">Detalle del error:</p>
+                        <p className="font-bold">Detalle del inconveniente:</p>
                         <p className="font-mono text-[11px] mt-0.5">{msg.error}</p>
                       </div>
                     </div>
                   )}
                 </div>
 
-                {/* Pre-visualization Card (Early or Final) */}
+                {/* Resource Preview Card */}
                 {(msg.preview || msg.result?.datos_ia) && (
-                  <div className="bg-slate-900 border border-slate-700/90 rounded-2xl p-4 space-y-3 shadow-xl">
-                    <div className="flex items-center justify-between border-b border-slate-800 pb-2">
+                  <div className="bg-slate-50 border border-slate-200 rounded-2xl p-4 space-y-3 shadow-sm">
+                    <div className="flex items-center justify-between border-b border-slate-200/80 pb-2">
                       <span className="text-[11px] font-bold uppercase tracking-wider text-moodle-orange flex items-center gap-1.5">
-                        <Sparkles className="w-3.5 h-3.5" /> Previsualización del Recurso
+                        <Sparkles className="w-3.5 h-3.5" /> Previsualización Generada
                       </span>
                       {msg.preview?.categoria_moodle && (
-                        <span className="text-[10px] px-2 py-0.5 rounded-full bg-slate-800 text-slate-300 font-mono border border-slate-700">
+                        <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-white text-slate-700 font-mono border border-slate-200 font-semibold shadow-2xs">
                           {msg.preview.categoria_moodle}
                         </span>
                       )}
                     </div>
 
-                    <div className="space-y-1.5 text-xs">
-                      <p className="font-bold text-slate-100 text-sm">
+                    <div className="space-y-2 text-xs">
+                      <p className="font-bold text-slate-900 text-sm">
                         {msg.preview?.nombre || msg.result?.publicado || 'Generando título...'}
                       </p>
                       
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-slate-300 text-[11px] pt-1">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-slate-600 text-[11px] pt-1">
                         {msg.preview?.empresa && (
                           <div className="flex items-center gap-1.5">
                             <Building2 className="w-3.5 h-3.5 text-slate-400" />
-                            <span>Empresa: <strong className="text-white">{msg.preview.empresa}</strong></span>
+                            <span>Empresa: <strong className="text-slate-900">{msg.preview.empresa}</strong></span>
                           </div>
                         )}
                         {msg.preview?.course_id && (
                           <div className="flex items-center gap-1.5">
                             <BookOpen className="w-3.5 h-3.5 text-moodle-orange" />
-                            <span>Cursos: <strong className="text-amber-300">{JSON.stringify(msg.preview.course_id)}</strong></span>
+                            <span>Cursos: <strong className="text-moodle-orange">{JSON.stringify(msg.preview.course_id)}</strong></span>
                           </div>
                         )}
                       </div>
@@ -420,7 +469,7 @@ Si no especificas el curso o la sección, ¡yo me encargaré de clasificarlo e i
                             href={msg.preview.url}
                             target="_blank"
                             rel="noreferrer"
-                            className="inline-flex items-center gap-1 text-[11px] font-semibold text-sky-400 hover:underline"
+                            className="inline-flex items-center gap-1 text-[11px] font-semibold text-sky-600 hover:text-sky-700 hover:underline"
                           >
                             <ExternalLink className="w-3 h-3" /> Ver Enlace Destino
                           </a>
@@ -429,25 +478,25 @@ Si no especificas el curso o la sección, ¡yo me encargaré de clasificarlo e i
                     </div>
 
                     {msg.result?.cursos_afectados && (
-                      <div className="mt-2 pt-2 border-t border-slate-800 text-[11px] text-emerald-400 font-semibold flex items-center gap-1.5">
-                        <CheckCircle2 className="w-3.5 h-3.5" />
-                        <span>Publicado correctamente en Moodle (Cursos: {JSON.stringify(msg.result.cursos_afectados)})</span>
+                      <div className="mt-2 pt-2 border-t border-slate-200/80 text-[11px] text-emerald-700 font-semibold flex items-center gap-1.5">
+                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                        <span>Publicado con éxito en Moodle (Cursos: {JSON.stringify(msg.result.cursos_afectados)})</span>
                       </div>
                     )}
                   </div>
                 )}
 
-                {/* Dropdown Accordion for Execution Logs */}
+                {/* Execution Logs Dropdown */}
                 {msg.logs && msg.logs.length > 0 && (
-                  <div className="bg-slate-900/90 border border-slate-800 rounded-xl overflow-hidden shadow-md">
+                  <div className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-xs">
                     <button
                       type="button"
                       onClick={() => toggleLogs(msg.id)}
-                      className="w-full px-3 py-2 text-left text-xs font-semibold text-slate-300 hover:text-white hover:bg-slate-800/60 flex items-center justify-between transition-all"
+                      className="w-full px-3.5 py-2 text-left text-xs font-semibold text-slate-700 hover:bg-slate-50 flex items-center justify-between transition-colors"
                     >
                       <span className="flex items-center gap-2 font-mono text-[11px]">
                         <Terminal className="w-3.5 h-3.5 text-moodle-orange" />
-                        Ver logs de ejecución ({msg.logs.length} eventos)
+                        Logs de ejecución ({msg.logs.length} eventos)
                       </span>
                       {msg.logsOpen ? (
                         <ChevronDown className="w-4 h-4 text-slate-400" />
@@ -457,7 +506,7 @@ Si no especificas el curso o la sección, ¡yo me encargaré de clasificarlo e i
                     </button>
 
                     {msg.logsOpen && (
-                      <div className="p-3 bg-slate-950 border-t border-slate-800 space-y-1.5 max-h-48 overflow-y-auto font-mono text-[11px]">
+                      <div className="p-3 bg-slate-900 text-slate-100 border-t border-slate-200 space-y-1.5 max-h-48 overflow-y-auto font-mono text-[11px] custom-scrollbar">
                         {msg.logs.map((log) => (
                           <div key={log.id} className="flex items-start gap-2">
                             <span className="text-slate-500 shrink-0">[{log.timestamp}]</span>
@@ -481,7 +530,7 @@ Si no especificas el curso o la sección, ¡yo me encargaré de clasificarlo e i
                   </div>
                 )}
 
-                <div className={`text-[10px] text-slate-500 px-1 ${msg.sender === 'user' ? 'text-right' : 'text-left'}`}>
+                <div className={`text-[10px] text-slate-400 px-1 ${msg.sender === 'user' ? 'text-right' : 'text-left'}`}>
                   {msg.timestamp}
                 </div>
 
@@ -489,8 +538,8 @@ Si no especificas el curso o la sección, ¡yo me encargaré de clasificarlo e i
 
               {/* User Avatar */}
               {msg.sender === 'user' && (
-                <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-slate-700 flex items-center justify-center text-white shrink-0 shadow-md mt-1">
-                  <User className="w-5 h-5 text-slate-300" />
+                <div className="w-9 h-9 rounded-full bg-slate-800 flex items-center justify-center text-white shrink-0 shadow-sm mt-1">
+                  <User className="w-5 h-5 text-slate-200" />
                 </div>
               )}
 
@@ -502,8 +551,8 @@ Si no especificas el curso o la sección, ¡yo me encargaré de clasificarlo e i
 
         {/* Preset Prompt Examples */}
         <div className="space-y-1.5 pt-1">
-          <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1">
-            <Sparkles className="w-3 h-3 text-moodle-orange" /> Ejemplos de mensajes para probar:
+          <p className="text-[11px] font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
+            <Sparkles className="w-3 h-3 text-moodle-orange" /> Ejemplos de mensaje sugeridos:
           </p>
           <div className="flex flex-wrap gap-2">
             {PRESET_EXAMPLES.map((ex, idx) => (
@@ -511,7 +560,7 @@ Si no especificas el curso o la sección, ¡yo me encargaré de clasificarlo e i
                 key={idx}
                 type="button"
                 onClick={() => setInputMessage(ex.text)}
-                className="px-3 py-1.5 rounded-xl bg-slate-800/80 hover:bg-slate-700 border border-slate-700/70 text-slate-300 hover:text-white text-xs font-medium transition-all shadow-sm active:scale-95 text-left"
+                className="px-3 py-1.5 rounded-xl bg-white hover:bg-orange-50/60 border border-slate-200 text-slate-700 hover:text-moodle-orange text-xs font-medium transition-all shadow-xs active:scale-95 text-left"
               >
                 {ex.label}
               </button>
@@ -519,34 +568,46 @@ Si no especificas el curso o la sección, ¡yo me encargaré de clasificarlo e i
           </div>
         </div>
 
-        {/* Chat Input Form */}
+        {/* Main Chat Input Form Bar */}
         <form
           onSubmit={(e) => {
             e.preventDefault();
             handleSendMessage();
           }}
-          className="bg-slate-800/90 border border-slate-700/80 rounded-2xl p-2.5 sm:p-3 shadow-xl flex items-end gap-2"
+          className="bg-white border border-slate-200 rounded-2xl p-3 shadow-md flex items-end gap-2.5 relative"
         >
-          <textarea
-            rows={2}
-            value={inputMessage}
-            onChange={(e) => setInputMessage(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                handleSendMessage();
-              }
-            }}
-            placeholder="Escribe o pega aquí la descripción del evento, URLs de registro/LinkedIn y empresa..."
-            className="flex-1 bg-slate-900 border border-slate-700 rounded-xl p-3 text-xs sm:text-sm text-slate-100 focus:outline-none focus:ring-2 focus:ring-moodle-orange focus:border-transparent transition-all resize-none placeholder-slate-500 font-sans"
-          />
+          <div className="flex-1 relative flex flex-col">
+            <textarea
+              rows={2}
+              value={inputMessage}
+              onChange={(e) => setInputMessage(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                  e.preventDefault();
+                  handleSendMessage();
+                }
+              }}
+              placeholder="Escribe o pega la descripción del evento, URLs y detalles..."
+              className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 pr-10 text-xs sm:text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-moodle-orange/30 focus:border-moodle-orange transition-all resize-none placeholder-slate-400 font-sans"
+            />
+            
+            {/* Expand Textarea Button */}
+            <button
+              type="button"
+              onClick={() => setIsModalOpen(true)}
+              title="Ampliar pantalla de texto"
+              className="absolute top-2.5 right-2.5 p-1.5 rounded-lg text-slate-400 hover:text-moodle-orange hover:bg-orange-50 transition-colors"
+            >
+              <Maximize2 className="w-4 h-4" />
+            </button>
+          </div>
 
           <button
             type="submit"
             disabled={isLoading || !inputMessage.trim()}
-            className={`min-h-[48px] px-4 py-3 rounded-xl font-bold text-white text-xs sm:text-sm shadow-lg flex items-center justify-center gap-2 transition-all shrink-0 active:scale-95 ${
+            className={`min-h-[48px] px-5 py-3 rounded-xl font-bold text-white text-xs sm:text-sm shadow-md flex items-center justify-center gap-2 transition-all shrink-0 active:scale-95 ${
               isLoading || !inputMessage.trim()
-                ? 'bg-slate-700 text-slate-500 cursor-not-allowed border border-slate-600'
+                ? 'bg-slate-200 text-slate-400 cursor-not-allowed border border-slate-200 shadow-none'
                 : 'bg-moodle-orange hover:bg-moodle-orangeHover moodle-glow'
             }`}
           >
@@ -555,7 +616,7 @@ Si no especificas el curso o la sección, ¡yo me encargaré de clasificarlo e i
             ) : (
               <>
                 <Send className="w-4 h-4" />
-                <span className="hidden sm:inline">Enviar a Modi</span>
+                <span className="hidden sm:inline">Enviar</span>
               </>
             )}
           </button>
@@ -563,10 +624,106 @@ Si no especificas el curso o la sección, ¡yo me encargaré de clasificarlo e i
 
       </main>
 
+      {/* Expanded Text Editor Full Modal */}
+      {isModalOpen && (
+        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-3 sm:p-6 animate-message-pop">
+          <div className="bg-white w-full max-w-4xl rounded-3xl border border-slate-200 shadow-2xl flex flex-col max-h-[92vh] overflow-hidden">
+            
+            {/* Modal Header */}
+            <div className="px-6 py-4 border-b border-slate-200 flex items-center justify-between bg-slate-50/80">
+              <div className="flex items-center gap-2.5">
+                <div className="p-2 rounded-xl bg-orange-100 text-moodle-orange">
+                  <Maximize2 className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="text-base font-bold text-slate-900">Editor Extendido de Texto</h3>
+                  <p className="text-xs text-slate-500">Espacio amplio para redactar o pegar convocatorias y cursos extensos</p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-3">
+                <span className="text-xs font-mono text-slate-400">
+                  {inputMessage.length} caracteres • {inputMessage.trim() ? inputMessage.trim().split(/\s+/).length : 0} palabras
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setIsModalOpen(false)}
+                  className="p-2 rounded-full text-slate-400 hover:text-slate-700 hover:bg-slate-200/60 transition-colors"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+            </div>
+
+            {/* Quick Presets inside Modal */}
+            <div className="px-6 py-2.5 bg-slate-100/60 border-b border-slate-200 flex items-center gap-2 overflow-x-auto text-xs">
+              <span className="text-slate-500 font-semibold shrink-0">Insertar Plantilla:</span>
+              {PRESET_EXAMPLES.map((ex, idx) => (
+                <button
+                  key={idx}
+                  type="button"
+                  onClick={() => setInputMessage(ex.text)}
+                  className="px-2.5 py-1 rounded-lg bg-white border border-slate-200 text-slate-700 hover:text-moodle-orange text-[11px] font-medium shrink-0 shadow-xs"
+                >
+                  {ex.label}
+                </button>
+              ))}
+            </div>
+
+            {/* Modal Body / Large Textarea */}
+            <div className="p-6 flex-1 flex flex-col min-h-[340px]">
+              <textarea
+                autoFocus
+                value={inputMessage}
+                onChange={(e) => setInputMessage(e.target.value)}
+                placeholder="Escribe o pega aquí la descripción detallada del curso o convocatoria..."
+                className="w-full flex-1 bg-slate-50 border border-slate-200 rounded-2xl p-4 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-moodle-orange/30 focus:border-moodle-orange font-sans leading-relaxed resize-none custom-scrollbar"
+              />
+            </div>
+
+            {/* Modal Footer */}
+            <div className="px-6 py-4 border-t border-slate-200 bg-slate-50/80 flex items-center justify-between">
+              <button
+                type="button"
+                onClick={() => setInputMessage('')}
+                className="px-3.5 py-2 rounded-xl text-slate-500 hover:text-rose-600 hover:bg-rose-50 text-xs font-semibold flex items-center gap-1.5 transition-colors"
+              >
+                <Trash2 className="w-4 h-4" /> Limpiar Texto
+              </button>
+
+              <div className="flex items-center gap-3">
+                <button
+                  type="button"
+                  onClick={() => setIsModalOpen(false)}
+                  className="px-4 py-2.5 rounded-xl border border-slate-200 text-slate-700 hover:bg-slate-200/60 font-semibold text-xs transition-colors"
+                >
+                  Cerrar
+                </button>
+
+                <button
+                  type="button"
+                  disabled={isLoading || !inputMessage.trim()}
+                  onClick={() => handleSendMessage()}
+                  className={`px-5 py-2.5 rounded-xl font-bold text-white text-xs shadow-md flex items-center gap-2 transition-all ${
+                    isLoading || !inputMessage.trim()
+                      ? 'bg-slate-200 text-slate-400 cursor-not-allowed'
+                      : 'bg-moodle-orange hover:bg-moodle-orangeHover'
+                  }`}
+                >
+                  <Send className="w-4 h-4" /> Enviar a Modi
+                </button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      )}
+
       {/* Footer */}
-      <footer className="bg-slate-950 border-t border-slate-800/80 py-4 text-center text-xs text-slate-500">
-        <p className="font-semibold text-slate-400">Modi: Agente Autónomo Moodle SEA Acatlán - FES Acatlán UNAM 2026</p>
+      <footer className="bg-white border-t border-slate-200 py-3.5 text-center text-xs text-slate-500">
+        <p className="font-semibold text-slate-600">Modi: Agente Autónomo Moodle SEA Acatlán - FES Acatlán UNAM 2026</p>
       </footer>
     </div>
   );
 }
+
