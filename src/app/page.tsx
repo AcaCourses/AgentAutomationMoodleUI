@@ -29,7 +29,9 @@ import {
   X,
   Trash2,
   Smile,
-  Zap
+  Zap,
+  Eye,
+  LayoutList
 } from 'lucide-react';
 
 interface ChatMessage {
@@ -48,6 +50,7 @@ interface ChatMessage {
     linkedin_url?: string;
     course_id?: any;
     seccion?: number;
+    descripcion_html?: string;
   };
   result?: any;
   error?: string;
@@ -95,7 +98,12 @@ export default function Home() {
   const [agentWiggle, setAgentWiggle] = useState<boolean>(false);
   const [agentSpeech, setAgentSpeech] = useState<string | null>(null);
 
-  // Chat message history
+  // Tab state for individual message preview cards
+  const [previewTabMap, setPreviewTabMap] = useState<Record<string, 'summary' | 'html'>>({});
+
+  const setMsgPreviewTab = (msgId: string, tab: 'summary' | 'html') => {
+    setPreviewTabMap((prev) => ({ ...prev, [msgId]: tab }));
+  };
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
       id: 'welcome-message',
@@ -429,62 +437,120 @@ Si no especificas el curso o la sección, ¡yo me encargaré de clasificarlo e i
                   )}
                 </div>
 
-                {/* Resource Preview Card */}
-                {(msg.preview || msg.result?.datos_ia) && (
-                  <div className="bg-slate-50 border border-slate-200 rounded-2xl p-3.5 sm:p-4 space-y-3 shadow-xs">
-                    <div className="flex items-center justify-between border-b border-slate-200/80 pb-2">
-                      <span className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-moodle-orange flex items-center gap-1.5">
-                        <Sparkles className="w-3.5 h-3.5" /> Previsualización Generada
-                      </span>
-                      {msg.preview?.categoria_moodle && (
-                        <span className="text-[10px] px-2 py-0.5 rounded-full bg-white text-slate-700 font-mono border border-slate-200 font-semibold shadow-2xs">
-                          {msg.preview.categoria_moodle}
-                        </span>
-                      )}
-                    </div>
+                {/* Resource Preview Card with Moodle HTML Rendering Tab */}
+                {(msg.preview || msg.result?.datos_ia) && (() => {
+                  const htmlContent = msg.preview?.descripcion_html || msg.result?.datos_ia?.descripcion_html || msg.result?.descripcion_html || '';
+                  const currentTab = previewTabMap[msg.id] || (htmlContent ? 'html' : 'summary');
 
-                    <div className="space-y-2 text-xs">
-                      <p className="font-bold text-slate-900 text-xs sm:text-sm">
-                        {msg.preview?.nombre || msg.result?.publicado || 'Generando título...'}
-                      </p>
-                      
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-slate-600 text-[11px] pt-1">
-                        {msg.preview?.empresa && (
-                          <div className="flex items-center gap-1.5">
-                            <Building2 className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                            <span className="truncate">Empresa: <strong className="text-slate-900">{msg.preview.empresa}</strong></span>
-                          </div>
-                        )}
-                        {msg.preview?.course_id && (
-                          <div className="flex items-center gap-1.5">
-                            <BookOpen className="w-3.5 h-3.5 text-moodle-orange shrink-0" />
-                            <span className="truncate">Cursos: <strong className="text-moodle-orange">{JSON.stringify(msg.preview.course_id)}</strong></span>
-                          </div>
-                        )}
+                  return (
+                    <div className="bg-slate-50 border border-slate-200 rounded-2xl p-3.5 sm:p-4 space-y-3 shadow-xs">
+                      {/* Card Header & View Tabs */}
+                      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-200/80 pb-2">
+                        <span className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-moodle-orange flex items-center gap-1.5">
+                          <Sparkles className="w-3.5 h-3.5" /> Previsualización Recurso Moodle
+                        </span>
+
+                        {/* View Tabs */}
+                        <div className="flex items-center gap-1 bg-slate-200/60 p-1 rounded-xl text-xs font-semibold">
+                          <button
+                            type="button"
+                            onClick={() => setMsgPreviewTab(msg.id, 'html')}
+                            className={`flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] transition-all ${
+                              currentTab === 'html'
+                                ? 'bg-white text-moodle-navy font-bold shadow-2xs'
+                                : 'text-slate-600 hover:text-slate-900'
+                            }`}
+                          >
+                            <Eye className="w-3.5 h-3.5 text-moodle-orange" /> Vista Moodle (HTML)
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setMsgPreviewTab(msg.id, 'summary')}
+                            className={`flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] transition-all ${
+                              currentTab === 'summary'
+                                ? 'bg-white text-moodle-navy font-bold shadow-2xs'
+                                : 'text-slate-600 hover:text-slate-900'
+                            }`}
+                          >
+                            <LayoutList className="w-3.5 h-3.5 text-slate-500" /> Ficha Técnica
+                          </button>
+                        </div>
                       </div>
 
-                      {msg.preview?.url && (
-                        <div className="pt-1">
-                          <a
-                            href={msg.preview.url}
-                            target="_blank"
-                            rel="noreferrer"
-                            className="inline-flex items-center gap-1 text-[11px] font-semibold text-sky-600 hover:text-sky-700 hover:underline break-all"
-                          >
-                            <ExternalLink className="w-3 h-3 shrink-0" /> Ver Enlace Destino
-                          </a>
+                      {/* Tab 1: Ficha Técnica (Summary) */}
+                      {currentTab === 'summary' ? (
+                        <div className="space-y-2 text-xs">
+                          <div className="flex items-center justify-between gap-2">
+                            <p className="font-bold text-slate-900 text-xs sm:text-sm">
+                              {msg.preview?.nombre || msg.result?.publicado || msg.result?.datos_ia?.nombre || 'Generando título...'}
+                            </p>
+                            {(msg.preview?.categoria_moodle || msg.result?.datos_ia?.categoria_moodle) && (
+                              <span className="text-[10px] px-2 py-0.5 rounded-full bg-white text-slate-700 font-mono border border-slate-200 font-semibold shadow-2xs shrink-0">
+                                {msg.preview?.categoria_moodle || msg.result?.datos_ia?.categoria_moodle}
+                              </span>
+                            )}
+                          </div>
+                          
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-slate-600 text-[11px] pt-1">
+                            {(msg.preview?.empresa || msg.result?.datos_ia?.empresa) && (
+                              <div className="flex items-center gap-1.5">
+                                <Building2 className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                                <span className="truncate">Empresa: <strong className="text-slate-900">{msg.preview?.empresa || msg.result?.datos_ia?.empresa}</strong></span>
+                              </div>
+                            )}
+                            {(msg.preview?.course_id || msg.result?.cursos_afectados) && (
+                              <div className="flex items-center gap-1.5">
+                                <BookOpen className="w-3.5 h-3.5 text-moodle-orange shrink-0" />
+                                <span className="truncate">Cursos: <strong className="text-moodle-orange">{JSON.stringify(msg.preview?.course_id || msg.result?.cursos_afectados)}</strong></span>
+                              </div>
+                            )}
+                          </div>
+
+                          {(msg.preview?.url || msg.result?.datos_ia?.url) && (
+                            <div className="pt-1">
+                              <a
+                                href={msg.preview?.url || msg.result?.datos_ia?.url}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="inline-flex items-center gap-1 text-[11px] font-semibold text-sky-600 hover:text-sky-700 hover:underline break-all"
+                              >
+                                <ExternalLink className="w-3 h-3 shrink-0" /> Ver Enlace Destino
+                              </a>
+                            </div>
+                          )}
+                        </div>
+                      ) : (
+                        /* Tab 2: Vista Moodle SEA (HTML Enriquecido) */
+                        <div className="space-y-2">
+                          {htmlContent ? (
+                            <div className="bg-white border border-slate-200 rounded-xl p-4 max-h-96 overflow-y-auto custom-scrollbar shadow-inner text-slate-800 text-xs leading-relaxed font-sans">
+                              <div className="text-[10px] font-mono text-slate-400 mb-2 pb-1 border-b border-slate-100 flex items-center justify-between">
+                                <span>🌐 Vista previa tal como se inyecta en Moodle SEA (TinyMCE)</span>
+                                <span>HTML: {htmlContent.length} chars</span>
+                              </div>
+                              <div
+                                className="prose prose-sm max-w-none text-slate-800 [&_img]:max-h-48 [&_img]:rounded-lg [&_img]:shadow-xs [&_a]:text-sky-600 [&_a]:underline"
+                                dangerouslySetInnerHTML={{ __html: htmlContent }}
+                              />
+                            </div>
+                          ) : (
+                            <div className="p-4 text-center text-slate-400 italic text-xs bg-white rounded-xl border border-slate-200">
+                              No hay contenido HTML retornado para previsualizar.
+                            </div>
+                          )}
+                        </div>
+                      )}
+
+                      {/* Status Banner when published */}
+                      {msg.result?.cursos_afectados && (
+                        <div className="mt-2 pt-2 border-t border-slate-200/80 text-[11px] text-emerald-700 font-semibold flex items-center gap-1.5">
+                          <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                          <span>Publicado con éxito en Moodle (Cursos: {JSON.stringify(msg.result.cursos_afectados)})</span>
                         </div>
                       )}
                     </div>
-
-                    {msg.result?.cursos_afectados && (
-                      <div className="mt-2 pt-2 border-t border-slate-200/80 text-[11px] text-emerald-700 font-semibold flex items-center gap-1.5">
-                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
-                        <span>Publicado con éxito en Moodle (Cursos: {JSON.stringify(msg.result.cursos_afectados)})</span>
-                      </div>
-                    )}
-                  </div>
-                )}
+                  );
+                })()}
 
                 {/* Execution Logs Dropdown */}
                 {msg.logs && msg.logs.length > 0 && (
