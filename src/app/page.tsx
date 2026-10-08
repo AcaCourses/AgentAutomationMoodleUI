@@ -237,7 +237,7 @@ Si no especificas el curso o la sección, ¡yo me encargaré de clasificarlo e i
           'x-token': apiSecret,
           'ngrok-skip-browser-warning': 'true',
         },
-        body: JSON.stringify({ message: textToSend }),
+        body: JSON.stringify({ message: textToSend, auto_publish: false }),
       });
 
       if (!response.ok) {
@@ -287,12 +287,21 @@ Si no especificas el curso o la sección, ¡yo me encargaré de clasificarlo e i
                       preview: eventData.data,
                     };
                   } else if (eventData.type === 'result') {
-                    return {
-                      ...msg,
-                      isWorking: false,
-                      result: eventData.data,
-                      text: `¡Listo! He clasificado y publicado **"${eventData.data.publicado}"** en Moodle SEA Acatlán exitosamente 🚀.`,
-                    };
+                    if (eventData.data.status === 'pending_approval') {
+                      return {
+                        ...msg,
+                        isWorking: false,
+                        result: eventData.data,
+                        text: `He preparado la publicación para **"${eventData.data.item_recurso?.nombre || 'el recurso'}"**. Por favor, revisa la información y aprueba para publicarlo en Moodle.`,
+                      };
+                    } else {
+                      return {
+                        ...msg,
+                        isWorking: false,
+                        result: eventData.data,
+                        text: `¡Listo! He clasificado y publicado **"${eventData.data.publicado}"** en Moodle SEA Acatlán exitosamente 🚀.`,
+                      };
+                    }
                   } else if (eventData.type === 'error') {
                     return {
                       ...msg,
@@ -325,6 +334,46 @@ Si no especificas el curso o la sección, ¡yo me encargaré de clasificarlo e i
       );
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handlePublishPrepared = async (msgId: string, itemRecurso: any, courseIds: any) => {
+    const baseUrl = getCleanBaseUrl();
+    
+    setMessages((prev) =>
+      prev.map((msg) =>
+        msg.id === msgId ? { ...msg, isWorking: true, text: `Publicando recurso en Moodle...` } : msg
+      )
+    );
+    
+    try {
+      // Tomamos el primer curso si es un arreglo
+      const cId = Array.isArray(courseIds) ? courseIds[0] : courseIds;
+      
+      const res = await fetch(`${baseUrl}/publish-prepared`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'x-token': apiSecret },
+        body: JSON.stringify({ item_recurso: itemRecurso, course_id: cId })
+      });
+      if (!res.ok) throw new Error('Error al publicar en Moodle');
+      const data = await res.json();
+      
+      setMessages((prev) =>
+        prev.map((msg) =>
+          msg.id === msgId ? { 
+            ...msg, 
+            isWorking: false, 
+            result: { ...msg.result, status: 'published', cursos_afectados: [cId], publicado: itemRecurso.nombre },
+            text: `¡Listo! He publicado **"${itemRecurso.nombre}"** en Moodle SEA Acatlán exitosamente 🚀.` 
+          } : msg
+        )
+      );
+    } catch (err: any) {
+      setMessages((prev) =>
+        prev.map((msg) =>
+          msg.id === msgId ? { ...msg, isWorking: false, error: err.message, text: `❌ Ocurrió un error al publicar: ${err.message}` } : msg
+        )
+      );
     }
   };
 
@@ -438,8 +487,8 @@ Si no especificas el curso o la sección, ¡yo me encargaré de clasificarlo e i
                 </div>
 
                 {/* Resource Preview Card with Moodle HTML Rendering Tab */}
-                {(msg.preview || msg.result?.datos_ia) && (() => {
-                  const htmlContent = msg.preview?.descripcion_html || msg.result?.datos_ia?.descripcion_html || msg.result?.descripcion_html || '';
+                {(msg.preview || msg.result?.item_recurso || msg.result?.datos_ia) && (() => {
+                  const htmlContent = msg.preview?.descripcion_html || msg.result?.item_recurso?.descripcion_html || msg.result?.datos_ia?.descripcion_html || msg.result?.descripcion_html || '';
                   const currentTab = previewTabMap[msg.id] || (htmlContent ? 'html' : 'summary');
 
                   return (
@@ -482,34 +531,34 @@ Si no especificas el curso o la sección, ¡yo me encargaré de clasificarlo e i
                         <div className="space-y-2 text-xs">
                           <div className="flex items-center justify-between gap-2">
                             <p className="font-bold text-slate-900 text-xs sm:text-sm">
-                              {msg.preview?.nombre || msg.result?.publicado || msg.result?.datos_ia?.nombre || 'Generando título...'}
+                              {msg.preview?.nombre || msg.result?.item_recurso?.nombre || msg.result?.publicado || msg.result?.datos_ia?.nombre || 'Generando título...'}
                             </p>
-                            {(msg.preview?.categoria_moodle || msg.result?.datos_ia?.categoria_moodle) && (
+                            {(msg.preview?.categoria_moodle || msg.result?.item_recurso?.categoria_moodle || msg.result?.datos_ia?.categoria_moodle) && (
                               <span className="text-[10px] px-2 py-0.5 rounded-full bg-white text-slate-700 font-mono border border-slate-200 font-semibold shadow-2xs shrink-0">
-                                {msg.preview?.categoria_moodle || msg.result?.datos_ia?.categoria_moodle}
+                                {msg.preview?.categoria_moodle || msg.result?.item_recurso?.categoria_moodle || msg.result?.datos_ia?.categoria_moodle}
                               </span>
                             )}
                           </div>
                           
                           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-slate-600 text-[11px] pt-1">
-                            {(msg.preview?.empresa || msg.result?.datos_ia?.empresa) && (
+                            {(msg.preview?.empresa || msg.result?.item_recurso?.empresa || msg.result?.datos_ia?.empresa) && (
                               <div className="flex items-center gap-1.5">
                                 <Building2 className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                                <span className="truncate">Empresa: <strong className="text-slate-900">{msg.preview?.empresa || msg.result?.datos_ia?.empresa}</strong></span>
+                                <span className="truncate">Empresa: <strong className="text-slate-900">{msg.preview?.empresa || msg.result?.item_recurso?.empresa || msg.result?.datos_ia?.empresa}</strong></span>
                               </div>
                             )}
-                            {(msg.preview?.course_id || msg.result?.cursos_afectados) && (
+                            {(msg.preview?.course_id || msg.result?.item_recurso?.course_id || msg.result?.cursos_afectados) && (
                               <div className="flex items-center gap-1.5">
                                 <BookOpen className="w-3.5 h-3.5 text-moodle-orange shrink-0" />
-                                <span className="truncate">Cursos: <strong className="text-moodle-orange">{JSON.stringify(msg.preview?.course_id || msg.result?.cursos_afectados)}</strong></span>
+                                <span className="truncate">Cursos: <strong className="text-moodle-orange">{JSON.stringify(msg.preview?.course_id || msg.result?.item_recurso?.course_id || msg.result?.cursos_afectados)}</strong></span>
                               </div>
                             )}
                           </div>
 
-                          {(msg.preview?.url || msg.result?.datos_ia?.url) && (
+                          {(msg.preview?.url || msg.result?.item_recurso?.url || msg.result?.datos_ia?.url) && (
                             <div className="pt-1">
                               <a
-                                href={msg.preview?.url || msg.result?.datos_ia?.url}
+                                href={msg.preview?.url || msg.result?.item_recurso?.url || msg.result?.datos_ia?.url}
                                 target="_blank"
                                 rel="noreferrer"
                                 className="inline-flex items-center gap-1 text-[11px] font-semibold text-sky-600 hover:text-sky-700 hover:underline break-all"
@@ -542,10 +591,38 @@ Si no especificas el curso o la sección, ¡yo me encargaré de clasificarlo e i
                       )}
 
                       {/* Status Banner when published */}
-                      {msg.result?.cursos_afectados && (
+                      {msg.result?.status === 'pending_approval' && (
+                        <div className="mt-3 pt-3 border-t border-slate-200 flex items-center justify-end gap-2">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setMessages(prev => prev.map(m => m.id === msg.id ? { ...m, result: { ...m.result, status: 'cancelled' }, text: 'Publicación cancelada por el usuario.' } : m));
+                            }}
+                            className="px-3 py-1.5 text-xs font-semibold text-slate-500 hover:text-slate-700 hover:bg-slate-100 rounded-lg transition-colors"
+                          >
+                            Cancelar
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handlePublishPrepared(msg.id, msg.result.item_recurso, msg.preview?.course_id || msg.result.item_recurso?.course_id)}
+                            className="px-3 py-1.5 text-xs font-bold text-white bg-moodle-orange hover:bg-moodle-orangeHover rounded-lg transition-colors flex items-center gap-1.5 shadow-sm"
+                          >
+                            <Check className="w-3.5 h-3.5" /> Aprobar y Publicar
+                          </button>
+                        </div>
+                      )}
+                      
+                      {msg.result?.cursos_afectados && msg.result?.status !== 'pending_approval' && (
                         <div className="mt-2 pt-2 border-t border-slate-200/80 text-[11px] text-emerald-700 font-semibold flex items-center gap-1.5">
                           <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
                           <span>Publicado con éxito en Moodle (Cursos: {JSON.stringify(msg.result.cursos_afectados)})</span>
+                        </div>
+                      )}
+                      
+                      {msg.result?.status === 'cancelled' && (
+                        <div className="mt-2 pt-2 border-t border-slate-200/80 text-[11px] text-slate-500 font-semibold flex items-center gap-1.5">
+                          <X className="w-3.5 h-3.5 shrink-0" />
+                          <span>Publicación descartada</span>
                         </div>
                       )}
                     </div>
