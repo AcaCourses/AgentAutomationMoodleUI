@@ -108,7 +108,7 @@ export default function Home() {
     {
       id: 'welcome-message',
       sender: 'modi',
-      timestamp: new Date().toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit' }),
+      timestamp: '', // Se establecerá en el cliente para evitar Hydration Error
       text: `¡Hola! Soy **Modi**, tu agente autónomo de automatización en Moodle SEA Acatlán 🎓.
 
 Para publicar una convocatoria, evento o recurso, solo envíame un mensaje. Puedes incluir:
@@ -130,6 +130,17 @@ Si no especificas el curso o la sección, ¡yo me encargaré de clasificarlo e i
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, isLoading]);
+
+  // Fix Hydration mismatch for welcome message timestamp
+  useEffect(() => {
+    setMessages(prev => {
+      const newMessages = [...prev];
+      if (newMessages[0] && newMessages[0].id === 'welcome-message' && !newMessages[0].timestamp) {
+        newMessages[0].timestamp = new Date().toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit' });
+      }
+      return newMessages;
+    });
+  }, []);
 
   // Check backend server status
   const checkServerStatus = async () => {
