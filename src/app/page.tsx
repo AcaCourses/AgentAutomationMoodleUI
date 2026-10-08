@@ -358,7 +358,6 @@ Si no especificas el curso o la sección, ¡yo me encargaré de clasificarlo e i
     );
     
     try {
-      // Tomamos el primer curso si es un arreglo
       const cId = Array.isArray(courseIds) ? courseIds[0] : courseIds;
       
       const res = await fetch(`${baseUrl}/publish-prepared`, {
@@ -366,23 +365,73 @@ Si no especificas el curso o la sección, ¡yo me encargaré de clasificarlo e i
         headers: { 'Content-Type': 'application/json', 'x-token': apiSecret },
         body: JSON.stringify({ item_recurso: itemRecurso, course_id: cId })
       });
-      if (!res.ok) throw new Error('Error al publicar en Moodle');
-      const data = await res.json();
       
-      setMessages((prev) =>
-        prev.map((msg) =>
-          msg.id === msgId ? { 
-            ...msg, 
-            isWorking: false, 
-            result: { ...msg.result, status: 'published', cursos_afectados: [cId], publicado: itemRecurso.nombre },
-            text: `¡Listo! He publicado **"${itemRecurso.nombre}"** en Moodle SEA Acatlán exitosamente 🚀.` 
-          } : msg
-        )
-      );
+      if (!res.ok) throw new Error('Error al publicar en Moodle');
+      
+      const reader = res.body?.getReader();
+      const decoder = new TextDecoder('utf-8');
+
+      if (!reader) {
+        throw new Error('No se pudo abrir el lector SSE del backend.');
+      }
+
+      let buffer = '';
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split('\n\n');
+        buffer = lines.pop() || '';
+
+        for (const line of lines) {
+          if (line.startsWith('data: ')) {
+            try {
+              const eventData = JSON.parse(line.replace('data: ', ''));
+
+              setMessages((prev) =>
+                prev.map((msg) => {
+                  if (msg.id !== msgId) return msg;
+
+                  if (eventData.type === 'log') {
+                    const newLog: LogEntry = {
+                      id: Math.random().toString(36).substring(2, 9),
+                      timestamp: new Date().toLocaleTimeString('es-MX', { hour12: false }),
+                      message: eventData.message,
+                      level: eventData.level || 'info',
+                    };
+                    return {
+                      ...msg,
+                      logs: [...(msg.logs || []), newLog],
+                    };
+                  } else if (eventData.type === 'result') {
+                    return {
+                      ...msg,
+                      isWorking: false,
+                      result: { ...msg.result, status: 'published', cursos_afectados: eventData.data.cursos_afectados || [cId], publicado: itemRecurso.nombre },
+                      text: `¡Listo! He publicado **"${itemRecurso.nombre}"** en Moodle SEA Acatlán exitosamente 🚀.`
+                    };
+                  } else if (eventData.type === 'error') {
+                    return {
+                      ...msg,
+                      isWorking: false,
+                      error: eventData.detail,
+                      text: `⚠️ Modi encontró un inconveniente al publicar.`,
+                    };
+                  }
+                  return msg;
+                })
+              );
+            } catch (err) {
+              console.error('Error al procesar mensaje SSE en publicación:', err);
+            }
+          }
+        }
+      }
     } catch (err: any) {
       setMessages((prev) =>
         prev.map((msg) =>
-          msg.id === msgId ? { ...msg, isWorking: false, error: err.message, text: `❌ Ocurrió un error al publicar: ${err.message}` } : msg
+          msg.id === msgId ? { ...msg, isWorking: false, error: err.message, text: `❌ Ocurrió un error al conectar con el servidor: ${err.message}` } : msg
         )
       );
     }
