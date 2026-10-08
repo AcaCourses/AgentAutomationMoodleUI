@@ -358,12 +358,11 @@ Si no especificas el curso o la sección, ¡yo me encargaré de clasificarlo e i
     );
     
     try {
-      const cId = Array.isArray(courseIds) ? courseIds[0] : courseIds;
-      
+      // Pasamos el courseIds intacto (sea un solo string o un arreglo completo)
       const res = await fetch(`${baseUrl}/publish-prepared`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'x-token': apiSecret },
-        body: JSON.stringify({ item_recurso: itemRecurso, course_id: cId })
+        body: JSON.stringify({ item_recurso: itemRecurso, course_id: courseIds })
       });
       
       if (!res.ok) throw new Error('Error al publicar en Moodle');
@@ -408,7 +407,7 @@ Si no especificas el curso o la sección, ¡yo me encargaré de clasificarlo e i
                     return {
                       ...msg,
                       isWorking: false,
-                      result: { ...msg.result, status: 'published', cursos_afectados: eventData.data.cursos_afectados || [cId], publicado: itemRecurso.nombre },
+                      result: { ...msg.result, status: 'published', cursos_afectados: eventData.data.cursos_afectados || courseIds, publicado: itemRecurso.nombre },
                       text: `¡Listo! He publicado **"${itemRecurso.nombre}"** en Moodle SEA Acatlán exitosamente 🚀.`
                     };
                   } else if (eventData.type === 'error') {
